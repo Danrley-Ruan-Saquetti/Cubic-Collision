@@ -17,6 +17,7 @@ const CANVAS_DIMENSION = {
         return canvas.clientHeight;
     }
 };
+resizeCanvas();
 let player;
 let enemies;
 let animateFrame;
@@ -28,6 +29,10 @@ function initial() {
     player = new Player({ x: 0, y: 0 }, { width: 0, height: 0 }, "");
     enemies = [new Enemy({ x: 0, y: 0 }, { width: 0, height: 0 }, "")];
     animate();
+}
+function resizeCanvas() {
+    canvas.width = WINDOW_DIMENSION.width();
+    canvas.height = WINDOW_DIMENSION.height();
 }
 function draw() {
     ctx.clearRect(0, 0, CANVAS_DIMENSION.width(), CANVAS_DIMENSION.height());
@@ -43,6 +48,8 @@ function update() {
     });
 }
 function animate() {
+    if (CANVAS_DIMENSION.width() != WINDOW_DIMENSION.width() || CANVAS_DIMENSION.height() != WINDOW_DIMENSION.height())
+        resizeCanvas();
     update();
     draw();
     animateFrame = requestAnimationFrame(animate);
