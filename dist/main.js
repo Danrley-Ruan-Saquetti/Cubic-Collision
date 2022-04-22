@@ -45,16 +45,10 @@ const DETECT_COLLISION = (x1, y1, w1, h1, x2, y2, w2, h2) => {
 const DIMENSION_BLOCK = () => {
     return (CANVAS_DIMENSION.width() * SPEED_PLAYER_PERC + CANVAS_DIMENSION.height() * SPEED_PLAYER_PERC) / 2;
 };
-<<<<<<< HEAD
-resizeCanvas();
-const SPEED_PLAYER = 4;
-const SPEED_ENEMY = SPEED_PLAYER / 2;
-=======
 const SPEED_PLAYER = () => { return DIMENSION_BLOCK() * 0.15; };
 const SPEED_ENEMY = () => { return SPEED_PLAYER() / 2; };
 const SPEED_PLAYER_PERC = .04;
 resizeCanvas();
->>>>>>> move-system
 let player;
 let enemies;
 let keys;
