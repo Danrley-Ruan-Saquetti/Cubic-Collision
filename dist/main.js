@@ -24,7 +24,8 @@ const SPAWN = {
         let speed = { x: 0, y: 0 };
         let color = "#ff0000";
         let lastKeys = { horizontal: "", vertical: "" };
-        return new Player(position, dimensionBlock, color, speed, lastKeys);
+        let points = 0;
+        return new Player(position, dimensionBlock, color, speed, lastKeys, points);
     },
     enemy: () => {
         let dimensionBlock = { width: DIMENSION_BLOCK(), height: DIMENSION_BLOCK() };
@@ -58,6 +59,8 @@ const SPEED_PLAYER = () => { return DIMENSION_BLOCK() * 0.15; };
 const SPEED_ENEMY = () => { return SPEED_PLAYER() / 2; };
 const SPEED_PLAYER_PERC = .04;
 const COIN_DIMENSION_PERC = .5;
+const COLLISION_PLAYER_COIN = 15;
+const COLLISION_ENEMY_ENEMY = 5;
 resizeCanvas();
 let player;
 let enemies;
@@ -146,6 +149,11 @@ function collisionEnemy_Enemy(e1, e2) {
     enemies.splice(e1, 1);
     enemies.push(SPAWN.enemy());
     enemies.push(SPAWN.enemy());
+    player.points += COLLISION_ENEMY_ENEMY;
+}
+function collisionPlayer_Coin() {
+    coin = SPAWN.coin();
+    player.points += COLLISION_PLAYER_COIN;
 }
 function update() {
     player.speed.x = 0;
@@ -164,7 +172,7 @@ function update() {
     }
     player.update();
     if (DETECT_COLLISION(coin.position.x, coin.position.y, coin.dimension.width, coin.dimension.height, player.position.x, player.position.y, player.dimension.width, player.dimension.height)) {
-        coin = SPAWN.coin();
+        collisionPlayer_Coin();
     }
     for (let i = 0; i < enemies.length; i++) {
         const e1 = enemies[i];

@@ -14,13 +14,15 @@ class Player implements Block {
     color: string
     speed: ISpeed
     lastKeys: ILastKeys
+    points: number
 
-    constructor(position: IPosition, dimension: IDimension, color: string, speed: ISpeed, lastKeys: ILastKeys) {
+    constructor(position: IPosition, dimension: IDimension, color: string, speed: ISpeed, lastKeys: ILastKeys, points: number) {
         this.position = position
         this.dimension = dimension
         this.color = color
         this.speed = speed
         this.lastKeys = lastKeys
+        this.points = points
     }
 
     draw() {
