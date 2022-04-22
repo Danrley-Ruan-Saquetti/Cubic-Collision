@@ -46,10 +46,12 @@ const DETECT_COLLISION = (x1: number, y1: number, w1: number, h1: number, x2: nu
         (x1 <= x2 + w2 && x1 >= x2 && y1 + h1 >= y2 && y1 + h1 <= y2 + h2))
 }
 const DIMENSION_BLOCK = () => {
-    return (CANVAS_DIMENSION.width() * .03 + CANVAS_DIMENSION.height() * .03) / 2
+    return (CANVAS_DIMENSION.width() * SPEED_PLAYER_PERC + CANVAS_DIMENSION.height() * SPEED_PLAYER_PERC) / 2
 }
-const SPEED_PLAYER = () => { return DIMENSION_BLOCK() * 0.1 }
+const SPEED_PLAYER = () => { return DIMENSION_BLOCK() * 0.15 }
 const SPEED_ENEMY = () => { return SPEED_PLAYER() / 2 }
+
+const SPEED_PLAYER_PERC = .03
 
 resizeCanvas()
 
@@ -131,14 +133,20 @@ function resizeParameters() {
     const oldWidth = CANVAS_DIMENSION.width()
     const oldHeight = CANVAS_DIMENSION.height()
 
+    const newPos = (pos: { x: number; y: number }) => {
+        return { x: (pos.x * CANVAS_DIMENSION.width()) / oldWidth, y: (pos.y * CANVAS_DIMENSION.height()) / oldHeight }
+    }
+
     resizeCanvas()
 
     let dimensionBlock = { width: DIMENSION_BLOCK(), height: DIMENSION_BLOCK() }
 
     player.dimension = dimensionBlock
+    player.position = newPos(player.position)
 
     enemies.forEach((enemy) => {
         enemy.dimension = dimensionBlock
+        enemy.position = newPos(enemy.position)
     })
 }
 
