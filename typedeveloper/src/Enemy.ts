@@ -17,12 +17,14 @@ class Enemy implements Block {
     }
 
     draw() {
-        ctx.fillStyle = this.color
+        ctx.fillStyle = "#000"
         ctx.fillRect(this.position.x, this.position.y, this.dimension.width, this.dimension.height)
+        ctx.fillStyle = this.color
+        ctx.fillRect(this.position.x + 1, this.position.y + 1, this.dimension.width - 1, this.dimension.height - 1)
     }
 
     update() {
-        const angulo = Math.atan2((this.position.x + (this.dimension.width / 2)) - this.target.x, (this.position.y + (this.dimension.height / 2)) - this.target.y)
+        const angulo = Math.atan2(this.target.y - (this.position.y + (this.dimension.height / 2)), this.target.x - (this.position.x + (this.dimension.width / 2)))
         const speed = { x: Math.cos(angulo) * SPEED_ENEMY(), y: Math.sin(angulo) * SPEED_ENEMY() }
 
         this.position.x += speed.x

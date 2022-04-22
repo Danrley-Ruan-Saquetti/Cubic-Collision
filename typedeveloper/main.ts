@@ -51,7 +51,7 @@ const DIMENSION_BLOCK = () => {
 const SPEED_PLAYER = () => { return DIMENSION_BLOCK() * 0.15 }
 const SPEED_ENEMY = () => { return SPEED_PLAYER() / 2 }
 
-const SPEED_PLAYER_PERC = .03
+const SPEED_PLAYER_PERC = .04
 
 resizeCanvas()
 
@@ -150,16 +150,6 @@ function resizeParameters() {
     })
 }
 
-function draw() {
-    ctx.fillStyle = "#000"
-    ctx.fillRect(0, 0, CANVAS_DIMENSION.width(), CANVAS_DIMENSION.height())
-
-    enemies.forEach((enemy) => {
-        enemy.draw()
-    })
-    player.draw()
-}
-
 function collisionPlayer_Enemy(e: number) {
     enemies.splice(e, 1)
     enemies.push(SPAWN.enemy())
@@ -198,6 +188,16 @@ function update() {
             }
         }
     }
+}
+
+function draw() {
+    ctx.fillStyle = "#000"
+    ctx.fillRect(0, 0, CANVAS_DIMENSION.width(), CANVAS_DIMENSION.height())
+
+    enemies.forEach((enemy) => {
+        enemy.draw()
+    })
+    player.draw()
 }
 
 function animate() {
