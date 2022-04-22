@@ -31,7 +31,16 @@ const SPAWN = {
         let color = "#fff";
         let position;
         do {
-            position = { x: Math.random() * CANVAS_DIMENSION.width(), y: Math.random() * CANVAS_DIMENSION.height() };
+            position = { x: Math.random() * (CANVAS_DIMENSION.width() - dimensionBlock.width), y: Math.random() * (CANVAS_DIMENSION.height() - dimensionBlock.height) };
+        } while (DETECT_COLLISION(player.position.x, player.position.y, player.dimension.width, player.dimension.height, position.x, position.y, dimensionBlock.width, dimensionBlock.height));
+        return new Enemy(position, dimensionBlock, color, player.position);
+    },
+    coin: () => {
+        let dimensionBlock = { width: DIMENSION_BLOCK() * COIN_DIMENSION_PERC, height: DIMENSION_BLOCK() * COIN_DIMENSION_PERC };
+        let color = "#ffff00";
+        let position;
+        do {
+            position = { x: Math.random() * (CANVAS_DIMENSION.width() - dimensionBlock.width), y: Math.random() * (CANVAS_DIMENSION.height() - dimensionBlock.height) };
         } while (DETECT_COLLISION(player.position.x, player.position.y, player.dimension.width, player.dimension.height, position.x, position.y, dimensionBlock.width, dimensionBlock.height));
         return new Enemy(position, dimensionBlock, color, player.position);
     }
@@ -48,9 +57,11 @@ const DIMENSION_BLOCK = () => {
 const SPEED_PLAYER = () => { return DIMENSION_BLOCK() * 0.15; };
 const SPEED_ENEMY = () => { return SPEED_PLAYER() / 2; };
 const SPEED_PLAYER_PERC = .04;
+const COIN_DIMENSION_PERC = .5;
 resizeCanvas();
 let player;
 let enemies;
+let coin;
 let keys;
 let animateFrame;
 function setup() {
@@ -104,6 +115,7 @@ function initial() {
     for (let i = 0; i < 4; i++) {
         enemies.push(SPAWN.enemy());
     }
+    coin = SPAWN.coin();
     animate();
 }
 function resizeCanvas() {
@@ -151,6 +163,9 @@ function update() {
         player.speed.x = -SPEED_PLAYER();
     }
     player.update();
+    if (DETECT_COLLISION(coin.position.x, coin.position.y, coin.dimension.width, coin.dimension.height, player.position.x, player.position.y, player.dimension.width, player.dimension.height)) {
+        coin = SPAWN.coin();
+    }
     for (let i = 0; i < enemies.length; i++) {
         const e1 = enemies[i];
         e1.update();
@@ -170,6 +185,7 @@ function update() {
 function draw() {
     ctx.fillStyle = "#000";
     ctx.fillRect(0, 0, CANVAS_DIMENSION.width(), CANVAS_DIMENSION.height());
+    coin.draw();
     enemies.forEach((enemy) => {
         enemy.draw();
     });
