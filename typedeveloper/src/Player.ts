@@ -1,8 +1,3 @@
-interface ISpeed {
-    x: number
-    y: number
-}
-
 interface ILastKeys {
     horizontal: string
     vertical: string
@@ -12,17 +7,19 @@ class Player implements Block {
     position: IPosition
     dimension: IDimension
     color: string
-    speed: ISpeed
+    speed: IPosition
     lastKeys: ILastKeys
     points: number
+    lives: number
 
-    constructor(position: IPosition, dimension: IDimension, color: string, speed: ISpeed, lastKeys: ILastKeys, points: number) {
+    constructor(position: IPosition, dimension: IDimension, color: string, speed: IPosition, lastKeys: ILastKeys, points: number, lives: number) {
         this.position = position
         this.dimension = dimension
         this.color = color
         this.speed = speed
         this.lastKeys = lastKeys
         this.points = points
+        this.lives = lives
     }
 
     draw() {

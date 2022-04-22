@@ -25,7 +25,8 @@ const SPAWN = {
         let color = "#ff0000";
         let lastKeys = { horizontal: "", vertical: "" };
         let points = 0;
-        return new Player(position, dimensionBlock, color, speed, lastKeys, points);
+        let lives = 10;
+        return new Player(position, dimensionBlock, color, speed, lastKeys, points, lives);
     },
     enemy: () => {
         let dimensionBlock = { width: DIMENSION_BLOCK(), height: DIMENSION_BLOCK() };
@@ -61,6 +62,7 @@ const SPEED_PLAYER_PERC = .04;
 const COIN_DIMENSION_PERC = .5;
 const COLLISION_PLAYER_COIN = 15;
 const COLLISION_ENEMY_ENEMY = 5;
+const COLLISION_PLAYER_ENEMY = 1;
 resizeCanvas();
 let player;
 let enemies;
@@ -143,6 +145,7 @@ function resizeParameters() {
 function collisionPlayer_Enemy(e) {
     enemies.splice(e, 1);
     enemies.push(SPAWN.enemy());
+    player.lives -= COLLISION_PLAYER_ENEMY;
 }
 function collisionEnemy_Enemy(e1, e2) {
     enemies.splice(e2, 1);
@@ -204,6 +207,7 @@ function animate() {
         resizeParameters();
     update();
     draw();
-    animateFrame = requestAnimationFrame(animate);
+    if (player.lives > 0)
+        animateFrame = requestAnimationFrame(animate);
 }
 window.onload = setup;

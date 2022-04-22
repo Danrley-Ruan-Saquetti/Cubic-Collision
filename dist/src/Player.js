@@ -1,12 +1,13 @@
 "use strict";
 class Player {
-    constructor(position, dimension, color, speed, lastKeys, points) {
+    constructor(position, dimension, color, speed, lastKeys, points, lives) {
         this.position = position;
         this.dimension = dimension;
         this.color = color;
         this.speed = speed;
         this.lastKeys = lastKeys;
         this.points = points;
+        this.lives = lives;
     }
     draw() {
         ctx.fillStyle = this.color;

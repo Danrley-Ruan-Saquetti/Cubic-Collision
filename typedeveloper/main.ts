@@ -25,8 +25,9 @@ const SPAWN = {
         let color = "#ff0000"
         let lastKeys = { horizontal: "", vertical: "" }
         let points = 0
+        let lives = 10
 
-        return new Player(position, dimensionBlock, color, speed, lastKeys, points)
+        return new Player(position, dimensionBlock, color, speed, lastKeys, points, lives)
     },
     enemy: () => {
         let dimensionBlock = { width: DIMENSION_BLOCK(), height: DIMENSION_BLOCK() }
@@ -68,6 +69,7 @@ const COIN_DIMENSION_PERC = .5 // % === / 100
 
 const COLLISION_PLAYER_COIN = 15 // Points
 const COLLISION_ENEMY_ENEMY = 5 // Points
+const COLLISION_PLAYER_ENEMY = 1 // lives
 
 resizeCanvas()
 
@@ -172,6 +174,8 @@ function resizeParameters() {
 function collisionPlayer_Enemy(e: number) {
     enemies.splice(e, 1)
     enemies.push(SPAWN.enemy())
+
+    player.lives -= COLLISION_PLAYER_ENEMY
 }
 
 function collisionEnemy_Enemy(e1: number, e2: number) {
@@ -207,7 +211,7 @@ function update() {
 
     for (let i = 0; i < enemies.length; i++) {
         const e1 = enemies[i];
-        
+
         e1.update()
 
         if (DETECT_COLLISION(player.position.x, player.position.y, player.dimension.width, player.dimension.height, e1.position.x, e1.position.y, e1.dimension.width, e1.dimension.height)) {
@@ -240,7 +244,7 @@ function animate() {
     update()
     draw()
 
-    animateFrame = requestAnimationFrame(animate)
+    if (player.lives > 0) animateFrame = requestAnimationFrame(animate)
 }
 
 window.onload = setup
