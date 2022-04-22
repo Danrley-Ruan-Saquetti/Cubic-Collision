@@ -37,6 +37,17 @@ const SPAWN = {
         } while (DETECT_COLLISION(player.position.x, player.position.y, player.dimension.width, player.dimension.height, position.x, position.y, dimensionBlock.width, dimensionBlock.height));
 
         return new Enemy(position, dimensionBlock, color, player.position)
+    },
+    coin: () => {
+        let dimensionBlock = { width: DIMENSION_BLOCK() * COIN_DIMENSION_PERC, height: DIMENSION_BLOCK() * COIN_DIMENSION_PERC }
+        let color = "#ffff00"
+        let position
+
+        do {
+            position = { x: Math.random() * CANVAS_DIMENSION.width(), y: Math.random() * CANVAS_DIMENSION.height() }
+        } while (DETECT_COLLISION(player.position.x, player.position.y, player.dimension.width, player.dimension.height, position.x, position.y, dimensionBlock.width, dimensionBlock.height));
+
+        return new Enemy(position, dimensionBlock, color, player.position)
     }
 }
 const DETECT_COLLISION = (x1: number, y1: number, w1: number, h1: number, x2: number, y2: number, w2: number, h2: number) => {
@@ -52,11 +63,13 @@ const SPEED_PLAYER = () => { return DIMENSION_BLOCK() * 0.15 }
 const SPEED_ENEMY = () => { return SPEED_PLAYER() / 2 }
 
 const SPEED_PLAYER_PERC = .04
+const COIN_DIMENSION_PERC = .1
 
 resizeCanvas()
 
 let player: Player
 let enemies: Enemy[]
+let coin: Coin
 
 let keys: {
     UP: boolean
