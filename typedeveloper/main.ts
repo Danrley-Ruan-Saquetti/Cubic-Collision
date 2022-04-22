@@ -121,9 +121,6 @@ function initial() {
         enemies.push(SPAWN.enemy())
     }
 
-    console.log(enemies);
-    
-
     animate()
 }
 
