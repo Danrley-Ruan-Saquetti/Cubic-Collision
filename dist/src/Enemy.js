@@ -12,12 +12,12 @@ class Enemy {
     }
     update() {
         if (this.position.x > this.target.x)
-            this.position.x--;
+            this.position.x -= SPEED_ENEMY;
         else if (this.position.x < this.target.x)
-            this.position.x++;
+            this.position.x += SPEED_ENEMY;
         if (this.position.y > this.target.y)
-            this.position.y--;
+            this.position.y -= SPEED_ENEMY;
         else if (this.position.y < this.target.y)
-            this.position.y++;
+            this.position.y += SPEED_ENEMY;
     }
 }

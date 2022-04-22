@@ -17,9 +17,37 @@ const CANVAS_DIMENSION = {
         return canvas.clientHeight;
     }
 };
+const SPAWN = {
+    player: () => {
+        let dimensionBlock = { width: DIMENSION_BLOCK(), height: DIMENSION_BLOCK() };
+        let position = { x: (CANVAS_DIMENSION.width() - dimensionBlock.width) / 2, y: (CANVAS_DIMENSION.height() - dimensionBlock.height) / 2 };
+        let speed = { x: 0, y: 0 };
+        let color = "#ff0000";
+        let lastKeys = { horizontal: "", vertical: "" };
+        return new Player(position, dimensionBlock, color, speed, lastKeys);
+    },
+    enemy: () => {
+        let dimensionBlock = { width: DIMENSION_BLOCK(), height: DIMENSION_BLOCK() };
+        let color = "#fff";
+        let position;
+        do {
+            position = { x: Math.random() * CANVAS_DIMENSION.width(), y: Math.random() * CANVAS_DIMENSION.height() };
+        } while (DETECT_COLLISION(player.position.x, player.position.y, player.dimension.width, player.dimension.height, position.x, position.y, dimensionBlock.width, dimensionBlock.height));
+        return new Enemy(position, dimensionBlock, color, player.position);
+    }
+};
+const DETECT_COLLISION = (xP, yP, wP, hP, xE, yE, wE, hE) => {
+    return ((xP >= xE && xP <= xE + wE && yP >= yE && yP <= yE + hE) ||
+        (xP + wP >= xE && xP + wP <= xE + wE && yP >= yE && yP <= yE + hE) ||
+        (xP + wP >= xE && xP + wP <= xE + wE && yP + hP >= yE && yP + hP <= yE + hE) ||
+        (xP <= xE + wE && xP >= xE && yP + hP >= yE && yP + hP <= yE + hE));
+};
 resizeCanvas();
-const DIMENSION_BLOCK = 30;
+const DIMENSION_BLOCK = () => {
+    return CANVAS_DIMENSION.width() * .03;
+};
 const SPEED_PLAYER = 4;
+const SPEED_ENEMY = SPEED_PLAYER / 2;
 let player;
 let enemies;
 let keys;
@@ -71,18 +99,26 @@ function initial() {
         LEFT: false,
     };
     enemies = [];
-    let dimensionBlock = { width: DIMENSION_BLOCK, height: DIMENSION_BLOCK };
-    let positionPlayer = { x: (CANVAS_DIMENSION.width() - dimensionBlock.width) / 2, y: (CANVAS_DIMENSION.height() - dimensionBlock.height) / 2 };
-    let speedPlayer = { x: 0, y: 0 };
-    let colorPlayer = "#ff0000";
-    let lastKeys = { horizontal: "", vertical: "" };
-    player = new Player(positionPlayer, dimensionBlock, colorPlayer, speedPlayer, lastKeys);
-    enemies = [new Enemy({ x: 0, y: 0 }, dimensionBlock, "#fff", player.position)];
+    player = SPAWN.player();
+    for (let i = 0; i < 4; i++) {
+        enemies.push(SPAWN.enemy());
+    }
+    console.log(enemies);
     animate();
 }
 function resizeCanvas() {
     canvas.width = WINDOW_DIMENSION.width();
     canvas.height = WINDOW_DIMENSION.height();
+}
+function resizeParameters() {
+    const oldWidth = CANVAS_DIMENSION.width();
+    const oldHeight = CANVAS_DIMENSION.height();
+    resizeCanvas();
+    let dimensionBlock = { width: DIMENSION_BLOCK(), height: DIMENSION_BLOCK() };
+    player.dimension = dimensionBlock;
+    enemies.forEach((enemy) => {
+        enemy.dimension = dimensionBlock;
+    });
 }
 function draw() {
     ctx.fillStyle = "#000";
@@ -108,13 +144,16 @@ function update() {
         player.speed.x = -SPEED_PLAYER;
     }
     player.update();
-    enemies.forEach((enemy) => {
+    enemies.forEach((enemy, iE) => {
         enemy.update();
+        if (DETECT_COLLISION(player.position.x, player.position.y, player.dimension.width, player.dimension.height, enemy.position.x, enemy.position.y, enemy.dimension.width, enemy.dimension.height)) {
+            enemies.splice(iE, 1);
+        }
     });
 }
 function animate() {
     if (CANVAS_DIMENSION.width() != WINDOW_DIMENSION.width() || CANVAS_DIMENSION.height() != WINDOW_DIMENSION.height())
-        resizeCanvas();
+        resizeParameters();
     update();
     draw();
     animateFrame = requestAnimationFrame(animate);

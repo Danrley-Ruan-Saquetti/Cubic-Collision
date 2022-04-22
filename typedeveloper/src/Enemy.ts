@@ -22,9 +22,9 @@ class Enemy implements Block {
     }
 
     update() {
-        if (this.position.x > this.target.x) this.position.x--
-        else if (this.position.x < this.target.x) this.position.x++
-        if (this.position.y > this.target.y) this.position.y--
-        else if (this.position.y < this.target.y) this.position.y++
+        if (this.position.x > this.target.x) this.position.x -= SPEED_ENEMY
+        else if (this.position.x < this.target.x) this.position.x += SPEED_ENEMY
+        if (this.position.y > this.target.y) this.position.y -= SPEED_ENEMY
+        else if (this.position.y < this.target.y) this.position.y += SPEED_ENEMY
     }
 }
