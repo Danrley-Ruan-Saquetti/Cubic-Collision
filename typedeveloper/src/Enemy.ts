@@ -1,12 +1,19 @@
+interface ITarget {
+    x: number
+    y: number
+}
+
 class Enemy implements Block {
     position: IPosition
     dimension: IDimension
     color: string
+    target: ITarget
 
-    constructor(position: IPosition, dimension: IDimension, color: string) {
+    constructor(position: IPosition, dimension: IDimension, color: string, target: ITarget) {
         this.position = position
         this.dimension = dimension
         this.color = color
+        this.target = target
     }
 
     draw() {
@@ -15,6 +22,9 @@ class Enemy implements Block {
     }
 
     update() {
-        
+        if (this.position.x > this.target.x) this.position.x--
+        else if (this.position.x < this.target.x) this.position.x++
+        if (this.position.y > this.target.y) this.position.y--
+        else if (this.position.y < this.target.y) this.position.y++
     }
 }

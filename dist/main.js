@@ -77,7 +77,7 @@ function initial() {
     let colorPlayer = "#ff0000";
     let lastKeys = { horizontal: "", vertical: "" };
     player = new Player(positionPlayer, dimensionBlock, colorPlayer, speedPlayer, lastKeys);
-    enemies = [new Enemy({ x: 0, y: 0 }, dimensionBlock, "#fff")];
+    enemies = [new Enemy({ x: 0, y: 0 }, dimensionBlock, "#fff", player.position)];
     animate();
 }
 function resizeCanvas() {
