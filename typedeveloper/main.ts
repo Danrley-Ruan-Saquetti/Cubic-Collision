@@ -39,20 +39,21 @@ const SPAWN = {
         return new Enemy(position, dimensionBlock, color, player.position)
     }
 }
-const DETECT_COLLISION = (xP: number, yP: number, wP: number, hP: number, xE: number, yE: number, wE: number, hE: number) => {
-    return ((xP >= xE && xP <= xE + wE && yP >= yE && yP <= yE + hE) ||
-        (xP + wP >= xE && xP + wP <= xE + wE && yP >= yE && yP <= yE + hE) ||
-        (xP + wP >= xE && xP + wP <= xE + wE && yP + hP >= yE && yP + hP <= yE + hE) ||
-        (xP <= xE + wE && xP >= xE && yP + hP >= yE && yP + hP <= yE + hE))
+const DETECT_COLLISION = (x1: number, y1: number, w1: number, h1: number, x2: number, y2: number, w2: number, h2: number) => {
+    return ((x1 >= x2 && x1 <= x2 + w2 && y1 >= y2 && y1 <= y2 + h2) ||
+        (x1 + w1 >= x2 && x1 + w1 <= x2 + w2 && y1 >= y2 && y1 <= y2 + h2) ||
+        (x1 + w1 >= x2 && x1 + w1 <= x2 + w2 && y1 + h1 >= y2 && y1 + h1 <= y2 + h2) ||
+        (x1 <= x2 + w2 && x1 >= x2 && y1 + h1 >= y2 && y1 + h1 <= y2 + h2))
 }
 const DIMENSION_BLOCK = () => {
-    return CANVAS_DIMENSION.width() * .03
+    return (CANVAS_DIMENSION.width() * SPEED_PLAYER_PERC + CANVAS_DIMENSION.height() * SPEED_PLAYER_PERC) / 2
 }
+const SPEED_PLAYER = () => { return DIMENSION_BLOCK() * 0.15 }
+const SPEED_ENEMY = () => { return SPEED_PLAYER() / 2 }
+
+const SPEED_PLAYER_PERC = .04
 
 resizeCanvas()
-
-const SPEED_PLAYER = 4
-const SPEED_ENEMY = SPEED_PLAYER / 2
 
 let player: Player
 let enemies: Enemy[]
@@ -132,15 +133,61 @@ function resizeParameters() {
     const oldWidth = CANVAS_DIMENSION.width()
     const oldHeight = CANVAS_DIMENSION.height()
 
+    const newPos = (pos: { x: number; y: number }) => {
+        return { x: (pos.x * CANVAS_DIMENSION.width()) / oldWidth, y: (pos.y * CANVAS_DIMENSION.height()) / oldHeight }
+    }
+
     resizeCanvas()
 
     let dimensionBlock = { width: DIMENSION_BLOCK(), height: DIMENSION_BLOCK() }
 
     player.dimension = dimensionBlock
+    player.position = newPos(player.position)
 
     enemies.forEach((enemy) => {
         enemy.dimension = dimensionBlock
+        enemy.position = newPos(enemy.position)
     })
+}
+
+function collisionPlayer_Enemy(e: number) {
+    enemies.splice(e, 1)
+    enemies.push(SPAWN.enemy())
+}
+
+function collisionEnemy_Enemy(e1: number, e2: number) {
+    enemies.splice(e2, 1)
+    enemies.splice(e1, 1)
+    enemies.push(SPAWN.enemy())
+    enemies.push(SPAWN.enemy())
+}
+
+function update() {
+    player.speed.x = 0
+    player.speed.y = 0
+
+    if (keys.UP && player.lastKeys.horizontal == "UP") { player.speed.y = -SPEED_PLAYER() }
+    else if (keys.DOWN && player.lastKeys.horizontal == "DOWN") { player.speed.y = SPEED_PLAYER() }
+    if (keys.RIGHT && player.lastKeys.vertical == "RIGHT") { player.speed.x = SPEED_PLAYER() }
+    else if (keys.LEFT && player.lastKeys.vertical == "LEFT") { player.speed.x = -SPEED_PLAYER() }
+
+    player.update()
+
+    for (let i = 0; i < enemies.length; i++) {
+        const e1 = enemies[i];
+        e1.update()
+
+        if (DETECT_COLLISION(player.position.x, player.position.y, player.dimension.width, player.dimension.height, e1.position.x, e1.position.y, e1.dimension.width, e1.dimension.height)) {
+            collisionPlayer_Enemy(i)
+        } else if (i < enemies.length - 1) {
+            for (let j = i + 1; j < enemies.length; j++) {
+                const e2 = enemies[j];
+                if (DETECT_COLLISION(e1.position.x, e1.position.y, e1.dimension.width, e1.dimension.height, e2.position.x, e2.position.y, e2.dimension.width, e2.dimension.height)) {
+                    collisionEnemy_Enemy(i, j)
+                }
+            }
+        }
+    }
 }
 
 function draw() {
@@ -151,25 +198,6 @@ function draw() {
         enemy.draw()
     })
     player.draw()
-}
-
-function update() {
-    player.speed.x = 0
-    player.speed.y = 0
-
-    if (keys.UP && player.lastKeys.horizontal == "UP") { player.speed.y = -SPEED_PLAYER }
-    else if (keys.DOWN && player.lastKeys.horizontal == "DOWN") { player.speed.y = SPEED_PLAYER }
-    if (keys.RIGHT && player.lastKeys.vertical == "RIGHT") { player.speed.x = SPEED_PLAYER }
-    else if (keys.LEFT && player.lastKeys.vertical == "LEFT") { player.speed.x = -SPEED_PLAYER }
-
-    player.update()
-    enemies.forEach((enemy, iE) => {
-        enemy.update()
-
-        if (DETECT_COLLISION(player.position.x, player.position.y, player.dimension.width, player.dimension.height, enemy.position.x, enemy.position.y, enemy.dimension.width, enemy.dimension.height)) {
-            enemies.splice(iE, 1)
-        }
-    })
 }
 
 function animate() {
