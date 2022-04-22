@@ -42,10 +42,10 @@ const DETECT_COLLISION = (xP, yP, wP, hP, xE, yE, wE, hE) => {
         (xP + wP >= xE && xP + wP <= xE + wE && yP + hP >= yE && yP + hP <= yE + hE) ||
         (xP <= xE + wE && xP >= xE && yP + hP >= yE && yP + hP <= yE + hE));
 };
-resizeCanvas();
 const DIMENSION_BLOCK = () => {
     return CANVAS_DIMENSION.width() * .03;
 };
+resizeCanvas();
 const SPEED_PLAYER = 4;
 const SPEED_ENEMY = SPEED_PLAYER / 2;
 let player;
@@ -103,7 +103,6 @@ function initial() {
     for (let i = 0; i < 4; i++) {
         enemies.push(SPAWN.enemy());
     }
-    console.log(enemies);
     animate();
 }
 function resizeCanvas() {

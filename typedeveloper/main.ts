@@ -45,12 +45,11 @@ const DETECT_COLLISION = (xP: number, yP: number, wP: number, hP: number, xE: nu
         (xP + wP >= xE && xP + wP <= xE + wE && yP + hP >= yE && yP + hP <= yE + hE) ||
         (xP <= xE + wE && xP >= xE && yP + hP >= yE && yP + hP <= yE + hE))
 }
-
-resizeCanvas()
-
 const DIMENSION_BLOCK = () => {
     return CANVAS_DIMENSION.width() * .03
 }
+
+resizeCanvas()
 
 const SPEED_PLAYER = 4
 const SPEED_ENEMY = SPEED_PLAYER / 2
