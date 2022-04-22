@@ -6,3 +6,8 @@
 body {
     overflow: hidden;
 }
+#canvas {
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    image-rendering: -moz-crisp-edges;
+}

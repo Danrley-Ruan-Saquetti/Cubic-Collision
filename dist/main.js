@@ -36,18 +36,18 @@ const SPAWN = {
         return new Enemy(position, dimensionBlock, color, player.position);
     }
 };
-const DETECT_COLLISION = (xP, yP, wP, hP, xE, yE, wE, hE) => {
-    return ((xP >= xE && xP <= xE + wE && yP >= yE && yP <= yE + hE) ||
-        (xP + wP >= xE && xP + wP <= xE + wE && yP >= yE && yP <= yE + hE) ||
-        (xP + wP >= xE && xP + wP <= xE + wE && yP + hP >= yE && yP + hP <= yE + hE) ||
-        (xP <= xE + wE && xP >= xE && yP + hP >= yE && yP + hP <= yE + hE));
+const DETECT_COLLISION = (x1, y1, w1, h1, x2, y2, w2, h2) => {
+    return ((x1 >= x2 && x1 <= x2 + w2 && y1 >= y2 && y1 <= y2 + h2) ||
+        (x1 + w1 >= x2 && x1 + w1 <= x2 + w2 && y1 >= y2 && y1 <= y2 + h2) ||
+        (x1 + w1 >= x2 && x1 + w1 <= x2 + w2 && y1 + h1 >= y2 && y1 + h1 <= y2 + h2) ||
+        (x1 <= x2 + w2 && x1 >= x2 && y1 + h1 >= y2 && y1 + h1 <= y2 + h2));
 };
-resizeCanvas();
 const DIMENSION_BLOCK = () => {
-    return CANVAS_DIMENSION.width() * .03;
+    return (CANVAS_DIMENSION.width() * .03 + CANVAS_DIMENSION.height() * .03) / 2;
 };
-const SPEED_PLAYER = 4;
-const SPEED_ENEMY = SPEED_PLAYER / 2;
+const SPEED_PLAYER = () => { return DIMENSION_BLOCK() * 0.1; };
+const SPEED_ENEMY = () => { return SPEED_PLAYER() / 2; };
+resizeCanvas();
 let player;
 let enemies;
 let keys;
@@ -103,7 +103,6 @@ function initial() {
     for (let i = 0; i < 4; i++) {
         enemies.push(SPAWN.enemy());
     }
-    console.log(enemies);
     animate();
 }
 function resizeCanvas() {
@@ -128,28 +127,47 @@ function draw() {
     });
     player.draw();
 }
+function collisionPlayer_Enemy(e) {
+    enemies.splice(e, 1);
+    enemies.push(SPAWN.enemy());
+}
+function collisionEnemy_Enemy(e1, e2) {
+    enemies.splice(e2, 1);
+    enemies.splice(e1, 1);
+    enemies.push(SPAWN.enemy());
+    enemies.push(SPAWN.enemy());
+}
 function update() {
     player.speed.x = 0;
     player.speed.y = 0;
     if (keys.UP && player.lastKeys.horizontal == "UP") {
-        player.speed.y = -SPEED_PLAYER;
+        player.speed.y = -SPEED_PLAYER();
     }
     else if (keys.DOWN && player.lastKeys.horizontal == "DOWN") {
-        player.speed.y = SPEED_PLAYER;
+        player.speed.y = SPEED_PLAYER();
     }
     if (keys.RIGHT && player.lastKeys.vertical == "RIGHT") {
-        player.speed.x = SPEED_PLAYER;
+        player.speed.x = SPEED_PLAYER();
     }
     else if (keys.LEFT && player.lastKeys.vertical == "LEFT") {
-        player.speed.x = -SPEED_PLAYER;
+        player.speed.x = -SPEED_PLAYER();
     }
     player.update();
-    enemies.forEach((enemy, iE) => {
-        enemy.update();
-        if (DETECT_COLLISION(player.position.x, player.position.y, player.dimension.width, player.dimension.height, enemy.position.x, enemy.position.y, enemy.dimension.width, enemy.dimension.height)) {
-            enemies.splice(iE, 1);
+    for (let i = 0; i < enemies.length; i++) {
+        const e1 = enemies[i];
+        e1.update();
+        if (DETECT_COLLISION(player.position.x, player.position.y, player.dimension.width, player.dimension.height, e1.position.x, e1.position.y, e1.dimension.width, e1.dimension.height)) {
+            collisionPlayer_Enemy(i);
         }
-    });
+        else if (i < enemies.length - 1) {
+            for (let j = i + 1; j < enemies.length; j++) {
+                const e2 = enemies[j];
+                if (DETECT_COLLISION(e1.position.x, e1.position.y, e1.dimension.width, e1.dimension.height, e2.position.x, e2.position.y, e2.dimension.width, e2.dimension.height)) {
+                    collisionEnemy_Enemy(i, j);
+                }
+            }
+        }
+    }
 }
 function animate() {
     if (CANVAS_DIMENSION.width() != WINDOW_DIMENSION.width() || CANVAS_DIMENSION.height() != WINDOW_DIMENSION.height())
