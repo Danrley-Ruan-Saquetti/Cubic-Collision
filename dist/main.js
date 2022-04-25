@@ -181,7 +181,7 @@ function update() {
         const e1 = enemies[i];
         e1.update();
         if (DETECT_COLLISION(player.position.x, player.position.y, player.dimension.width, player.dimension.height, e1.position.x, e1.position.y, e1.dimension.width, e1.dimension.height)) {
-            collisionPlayer_Enemy(i);
+            //collisionPlayer_Enemy(i);
         }
         else if (i < enemies.length - 1) {
             for (let j = i + 1; j < enemies.length; j++) {
@@ -198,7 +198,7 @@ function draw() {
     ctx.fillRect(0, 0, CANVAS_DIMENSION.width(), CANVAS_DIMENSION.height());
     coin.draw();
     enemies.forEach((enemy) => {
-        enemy.draw();
+        //enemy.draw();
     });
     player.draw();
 }
